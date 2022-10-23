@@ -1,69 +1,55 @@
-#define _CRT_SECURE_NO_WARNINGS
+ï»¿#define _CRT_SECURE_NO_WARNINGS
 #include <stdio.h>
-#define MAX_SIZE 10000
-
-void swap(int* a, int* b) {
-	int temp = *a;
-	*a = *b;
-	//test
-	*b = temp;
-}
+#include <stdlib.h>
 
 typedef struct {
-	int heap[MAX_SIZE];
-	int count;
-}priorityQueue;
+	int index;
+	int distance;
+	struct Node* next;
+}Node;
+//ì—°ê²°ë¦¬ìŠ¤íŠ¸ êµ¬ì¡°ì²´ ë§Œë“¤ê¸°
 
-void push(priorityQueue* pq, int data) {
-	if (pq->count >= MAX_SIZE) return;
-	pq->heap[pq->count] = data;
-	int now = pq->count;
-	int parent = (pq->count - 1) / 2;
-	//»õ ¿ø¼Ò¸¦ »ðÀÔÇÑ ÀÌÈÄ¿¡ »óÇâ½ÄÀ¸·Î ÈüÀ» ±¸¼ºÇÕ´Ï´Ù.
-	while (now > 0 && pq->heap[now] > pq->heap[parent]) {
-		swap(&pq->heap[now], &pq->heap[parent]);
-		now = parent;
-		parent = (parent - 1) / 2;
-	}
-	pq->count++;
+void addFront(Node* root, int index, int distance)
+{
+	Node* node = (Node*)malloc(sizeof(Node));
+	node->index = index;
+	node->distance = distance;
+	node->next = root->next;
+	root->next = node;
 }
+//ì—°ê²°ë¦¬ìŠ¤íŠ¸ ì‚½ìž…í•¨ìˆ˜
 
-int pop(priorityQueue* pq) {
-	if (pq->count <= 0) return -9999;
-	int res = pq->heap[0];
-	pq->count--;
-	pq->heap[0] = pq->heap[pq->count];
-	int now = 0, leftchild = 1, rightchild = 2;
-	int target = now;
-	//»õ ¿ø¼Ò¸¦ ÃßÃâÇÑ ÀÌÈÄ¿¡ ÇÏÇâ½ÄÀ¸·Î ÈüÀ» ±¸¼ºÇÕ´Ï´Ù.
-	while (leftchild < pq->count) {
-		if (pq->heap[target] < pq->heap[leftchild]) target = leftchild; //Èü ÇìµåÀÇ ¿ÞÂÊÀÚ½Äº¸´Ù ÀÛ´Ù¸é Å¸°ÙÀº ¿ÞÂÊ¾Æµé
-		if (pq->heap[target] < pq->heap[rightchild] && rightchild < pq->count) target = rightchild;
-		if (target == now) break;
-		else {
-			swap(&pq->heap[now], &pq->heap[target]);
-			now = target;
-			leftchild = now * 2 + 1;
-			rightchild = now * 2 + 2;
-		}
-	}
-	return res;
+void showAll(Node* root) {
+	Node* cur = root->next;
+	while (cur != NULL) {
+		printf("%d(ê±°ë¦¬ :%d) ", cur->index, cur->distance);
+			cur = cur->next;
+			}
 }
-
-int main(void) {
-	int n, data;
-	scanf("%d", &n);
-	priorityQueue pq;
-	pq.count = 0;
-	for (int i = 0; i < n; i++) {
-		scanf("%d", &data);
-		push(&pq, data);
+int main(void)
+{
+     	int n, m;
+	scanf("%d %d", &n, &m);
+	Node** a = (Node**)malloc(sizeof(Node*) * (n + 1));
+	for (int i = 1; i <=   n; i++)
+	{
+		a[i] = (Node*)malloc(sizeof(Node));
+		a[i]->next = NULL;
 	}
-	for (int i = 0; i < n; i++) {
-		int data = pop(&pq);
-		printf("%d ", data);
+	for (int i = 0; i < m; i++)
+	{
+		int x, y, distance;
+		scanf("%d %d %d", &x, &y, &distance);
+		addFront(a[x], y, distance);
+	}
+	for (int i = 1; i <= n; i++)
+	{
+		printf("ì›ì†Œ [%d]: ", i);
+		showAll(a[i]);
+		printf("\n");
+
 	}
 	system("pause");
 	return 0;
 }
-
+	
