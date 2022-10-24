@@ -9,18 +9,14 @@
 typedef struct
 {
 	int id;
-	char name[20];
+	char name[1000];
 } Student;
 
 //해시 테이블을 초기화합니다.
-void init(Student** hashTable) 
+void init(Student** hashTable)
 {
-	for (int i = 0; i < TABLE_SIZE; i++)
-	{
-		if (hashTable[i] != NULL)
-		{
-			free(hashTable[i]);
-		}
+	for (int i = 0; i < TABLE_SIZE; i++) {
+		hashTable[i] = NULL;
 	}
 }
 
@@ -43,6 +39,7 @@ int fineEmpty(Student** hashTable, int id)
 		{
 			return i % TABLE_SIZE;
 		}
+		i++;
 	}
 }
 //특정한 ID값에 매칭되는 데이터를 해시테이블내에서 찾습니다.
@@ -59,7 +56,7 @@ int search(Student** hashTable, int id)
 //특정한 키 인덱스에 데이터를 삽입합니다.
 void add(Student** hashTable, Student* input, int key)
 {
-	return hashTable[key];
+	hashTable[key] = input;
 }
 
 //해시 테이블에서 특정한 키의 데이터를 반환합니다.
@@ -75,7 +72,7 @@ void show(Student** hashTable)
 	{
 		if (hashTable[i] != NULL)
 		{
-			printf("키 : [&d] 이름 : [%s]\n", i, hashTable[i]->name);
+			printf("키 : [%d] 이름 : [%s]\n", i, hashTable[i]->name);
 		}
 	}
 }
@@ -87,7 +84,7 @@ int main(void)
 
 	for (int i = 0; i < INPUT_SIZE; i++)
 	{
-		Student* student = (Student*)malloc(sizeof(student));
+		Student* student = (Student*)malloc(sizeof(Student));
 		student->id = rand() % 1000000;
 		sprintf(student->name, "사람%d", student->id);
 		if (search(hashTable, student->id) == -1) //중복되는 ID는 존재하지 않도록 함
@@ -96,12 +93,10 @@ int main(void)
 			add(hashTable, student, index);
 		}
 	}
-
 show(hashTable);
 destructor(hashTable);
 system("pause");
 return 0;
-
 }
 
 
