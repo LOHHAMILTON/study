@@ -24,6 +24,15 @@ void init(Student** hashTable)
 	}
 }
 
+void destructor(Student** hashTable)
+{
+	for (int i = 0; i < TABLE_SIZE; i++) {
+		if (hashTable[i] != NULL) {
+			free(hashTable[i]);
+		}
+	}
+}
+
 //해시 테이블 내 빈 공간을 선형 탐색으로 찾습니다.
 int fineEmpty(Student** hashTable, int id)
 {
@@ -60,11 +69,11 @@ Student* getValue(Student** hashTable, int key)
 }
 
 //해시테이블에 존재하는 모든데이터를 출력합니다.
-void show(Student** hashtable)
+void show(Student** hashTable)
 {
 	for (int i = 0; i < TABLE_SIZE; i++)
 	{
-		if (hashtable[i] != NULL)
+		if (hashTable[i] != NULL)
 		{
 			printf("키 : [&d] 이름 : [%s]\n", i, hashTable[i]->name);
 		}
@@ -74,6 +83,8 @@ int main(void)
 {
 	Student** hashTable;
 	hashTable = (Student**)malloc(sizeof(Student) * TABLE_SIZE);
+	init(hashTable);
+
 	for (int i = 0; i < INPUT_SIZE; i++)
 	{
 		Student* student = (Student*)malloc(sizeof(student));
