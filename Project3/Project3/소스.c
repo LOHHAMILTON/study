@@ -1,55 +1,107 @@
 ﻿#define _CRT_SECURE_NO_WARNINGS
 #include <stdio.h>
 #include <stdlib.h>
+#define INF 99999999
+#define MAX_SIZE 1001
 
-typedef struct {
+typedef struct
+{
 	int index;
-	int distance;
 	struct Node* next;
 }Node;
-//연결리스트 구조체 만들기
 
-void addFront(Node* root, int index, int distance)
+typedef struct
 {
+	Node* front;
+	Node* rear;
+	int count;
+}Queue;
+Node** a;
+int n, m, c[MAX_SIZE];
+
+void addFront(Node* root, int index) {
 	Node* node = (Node*)malloc(sizeof(Node));
 	node->index = index;
-	node->distance = distance;
 	node->next = root->next;
 	root->next = node;
 }
-//연결리스트 삽입함수
 
-void showAll(Node* root) {
-	Node* cur = root->next;
-	while (cur != NULL) {
-		printf("%d(거리 :%d) ", cur->index, cur->distance);
-			cur = cur->next;
-			}
+void queuePush(Queue* queue, int index)
+{
+	Node* node = (Node*)malloc(sizeof(Node));
+	node->index = index;
+	node->next = NULL;
+	if (queue->count == 0) {
+		queue->front = node;
+	}
+	else
+	{
+		queue->rear->next = node;
+	}
+	{
+		queue->rear = node;
+		queue->count++;
+	}
 }
+
+int queuePop(Queue* queue)
+{
+	if (queue->count == 0)
+	{
+		printf("큐 언더플로우가 발생했습니다.\n");
+		return -INF;
+	}
+	Node* node = queue->front;
+	int index = node->index;
+	queue->front = node->next;
+	free(node);
+	queue->count--;
+	return index;
+}
+
+void bfs(int start)
+{
+	Queue q;
+	q.front = q.rear = NULL;
+	q.count = 0;
+	queuePush(&q, start);//start는 1이 초기값
+	c[start] = 1;//방문처리
+	while (q.count != 0)
+	{
+		int x = queuePop(&q);
+		printf("%d ", x);
+		Node* cur = a[x]->next;
+		while (cur != NULL)
+		{
+			int next = cur->index;
+			if (!c[next])
+			{
+				queuePush(&q, next);
+				c[next] = 1;//방문처리
+			}
+			cur = cur->next;
+		}
+	}
+}
+
 int main(void)
 {
-     	int n, m;
 	scanf("%d %d", &n, &m);
-	Node** a = (Node**)malloc(sizeof(Node*) * (n + 1));
-	for (int i = 1; i <=   n; i++)
+	a = (Node**)malloc(sizeof(Node*) * (MAX_SIZE));
+	for (int i = 1; i <= n; i++)
 	{
-		a[i] = (Node*)malloc(sizeof(Node));
-		a[i]->next = NULL;
+	a[i] = (Node*)malloc(sizeof(Node));
+	a[i]->next = NULL;
 	}
 	for (int i = 0; i < m; i++)
 	{
-		int x, y, distance;
-		scanf("%d %d %d", &x, &y, &distance);
-		addFront(a[x], y, distance);
+		int x, y;
+		scanf("%d %d", &x, &y);
+		addFront(a[x], y);
+		addFront(a[y], x);
 	}
-	for (int i = 1; i <= n; i++)
-	{
-		printf("원소 [%d]: ", i);
-		showAll(a[i]);
-		printf("\n");
-
-	}
+	bfs(1);
 	system("pause");
 	return 0;
+
 }
-	
